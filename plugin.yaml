@@ -1,5 +1,5 @@
 name: hermes-vault
-version: 2.1.0
+version: 2.2.0
 description: "Encrypted backend for executor plugins. The model can only run a non-sensitive health check."
 author: "sbrejnev988-coder"
 license: "MIT"
