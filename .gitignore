@@ -1,0 +1,6 @@
+secrets_registry.json
+__pycache__/
+*.pyc
+.env
+*.bak*
+backups/
