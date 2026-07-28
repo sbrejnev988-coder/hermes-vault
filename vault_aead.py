@@ -442,3 +442,15 @@ try:
     vault_init(_vault_key_path)
 except Exception:
     pass  # vault будет недоступен, операции будут падать с ошибкой
+
+def vault_health():
+    """Check vault configuration and key status."""
+    import os
+    key = os.environ.get("MW_VAULT_KEY", "")
+    return {
+        "ok": True,
+        "version": "v3",
+        "aead": "ChaCha20Poly1305",
+        "key_configured": bool(key),
+        "key_len": len(key) if key else 0,
+    }
