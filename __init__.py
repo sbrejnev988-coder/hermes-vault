@@ -13,23 +13,27 @@ VERSION = "2.2.0"
 
 
 def _core():
+    # HERMES-SECURITY-INTEGRATION-20260728: fixed-path, SHA-256-pinned secret core.
     home = Path(os.environ.get("HERMES_HOME", str(Path.home() / ".hermes"))).expanduser()
-    candidates = [
-        Path(os.environ.get("HERMES_SECRET_CORE_PATH", "")).expanduser() if os.environ.get("HERMES_SECRET_CORE_PATH") else None,
-        home / "lib",
-        Path(__file__).resolve().parent.parent.parent / "lib",
-    ]
-    for candidate in candidates:
-        if candidate and candidate.exists() and str(candidate) not in sys.path:
-            sys.path.insert(0, str(candidate))
-    from hermes_secret_core import VaultStore, require_version
-    require_version((2, 2, 0))
-    return VaultStore
+    lib = home / "lib"
+    if str(lib) not in sys.path:
+        sys.path.insert(0, str(lib))
+    from hermes_core_loader import load_secret_core
+    return load_secret_core(("VaultStore",)).VaultStore
 
 
 def vault_health() -> dict:
     raw = _core()().health()
+    home = Path(os.environ.get("HERMES_HOME", str(Path.home() / ".hermes"))).expanduser()
+    lib = home / "lib"
+    if str(lib) not in sys.path:
+        sys.path.insert(0, str(lib))
+    from hermes_core_loader import describe_secret_core
+    integrity = describe_secret_core()
     return {
+        "core_integrity_ok": bool(integrity.get("integrity_ok")),
+        "core_sha256": str(integrity.get("sha256") or ""),
+        "core_path": str(integrity.get("path") or ""),
         "available": bool(raw.get("available")),
         "backend": "sqlite-aead-v3",
         "entries": int(raw.get("entries", 0)),
