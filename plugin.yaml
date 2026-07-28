@@ -1,19 +1,11 @@
 name: hermes-vault
-version: 1.0.0
-description: "AEAD secret management for Hermes Agent — ChaCha20Poly1305 wrapping, key rotation, XOR legacy fallback, zero dependencies (stdlib-only Python). Integrates with memory-wiki for redacted secret references."
+version: 2.1.0
+description: "Encrypted backend for executor plugins. The model can only run a non-sensitive health check."
 author: "sbrejnev988-coder"
 license: "MIT"
 
-hooks:
-  - pre_llm_call
-
 provides_tools:
-  - vault_wrap
-  - vault_unwrap
-  - vault_rotate_key
-  - vault_migrate
   - vault_health
 
 provides_modules:
-  - vault
-  - vault_aead
+  - executor_bridge
